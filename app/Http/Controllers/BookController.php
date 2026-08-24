@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Book;
 
 class BookController extends Controller
 {
     public function index()
     {
-        return view('books.index');
+        $books = Book::with(['genres', 'user'])
+            ->withAvg('reviews', 'rating')
+            ->latest()
+            ->paginate(10);
+        return view('books.index', compact('books'));
     }
 
     public function show($book)

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\RankingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -62,6 +63,5 @@ Route::get('/favorites', function () {
 })->name('favorites.index');
 
 // ランキング
-Route::get('/ranking', function () {
-    return view('ranking.index');
-})->name('ranking.index');
+Route::get('/ranking', [RankingController::class, 'index'])
+    ->name('ranking.index');
