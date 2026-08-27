@@ -10,6 +10,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Book;
 
 class User extends Authenticatable
 {
@@ -58,9 +59,12 @@ class User extends Authenticatable
         return $this->hasMany(Review::class);
     }
 
-    public function favoriteBooks(): BelongsToMany
+    public function favoriteBooks()
     {
-        return $this->belongsToMany(Book::class, 'favorites');
+        return $this->belongsToMany(
+            Book::class,
+            'favorites'
+        );
     }
 
     public function likedReviews(): BelongsToMany
