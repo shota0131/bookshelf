@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreBookRequest;
+use App\Http\Requests\UpdateBookRequest;
 use App\Models\Book;
 use App\Models\Genre;
 
@@ -60,5 +61,34 @@ class BookController extends Controller
         $genres = Genre::orderBy('name')->get();
 
         return view('books.edit', compact('book', 'genres'));
+    }
+
+    public function update(UpdateBookRequest $request, Book $book)
+    {
+        $validated = $request->validated();
+
+        $genreIds = $validated['genre_ids'];
+        unset($validated['genre_ids']);
+
+        $book->update($validated);
+
+        $book->genres()->sync($genreIds);
+
+        return redirect()
+            ->route('books.show', $book)
+            ->with('success', '書籍を更新しました。');
+    }
+
+    public function destroy(Book $book)
+    {
+        $book->genres()->detach();
+
+        $book->reviews()->delete();
+
+        $book->delete();
+
+        return redirect()
+            ->route('books.index')
+            ->with('success', '書籍を削除しました。');
     }
 }

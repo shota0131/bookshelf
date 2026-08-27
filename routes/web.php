@@ -5,6 +5,8 @@ use App\Http\Controllers\BookController;
 use App\Http\Controllers\RankingController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\GenreController;
+use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\ReviewLikeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +34,14 @@ Route::post('/books', [BookController::class, 'store'])
 // 書籍編集
 Route::get('/books/{book}/edit', [BookController::class, 'edit'])
     ->name('books.edit');
+
+// 書籍更新
+Route::put('/books/{book}', [BookController::class, 'update'])
+    ->name('books.update');
+
+// 書籍削除
+Route::delete('/books/{book}', [BookController::class, 'destroy'])
+    ->name('books.destroy');
 
 // 書籍詳細
 Route::get('/books/{book}', [BookController::class, 'show'])
@@ -79,4 +89,13 @@ Route::get('/ranking', [RankingController::class, 'index'])
 Route::middleware('auth')->group(function () {
     Route::get('/favorites', [FavoriteController::class, 'index'])
         ->name('favorites.index');
+
+    Route::post('/favorites/{book}/toggle', [FavoriteController::class, 'toggle'])
+        ->name('favorites.toggle');
+    
+    Route::post('/books/{book}/reviews', [ReviewController::class, 'store'])
+        ->name('reviews.store');
+
+    Route::post('/reviews/{review}/like', [ReviewLikeController::class, 'like'])
+    ->name('reviews.like');
 });

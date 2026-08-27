@@ -9,7 +9,6 @@ use App\Http\Requests\UpdateBookRequest;
 use App\Http\Resources\BookDetailResource;
 use App\Http\Resources\BookResource;
 use App\Models\Book;
-use App\Models\Genre;
 use Illuminate\Http\JsonResponse;
 
 class BookController extends Controller
@@ -61,7 +60,6 @@ class BookController extends Controller
 
         return new BookDetailResource($book);
     }
-
 
     /**
      * Display the specified resource.

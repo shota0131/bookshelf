@@ -6,19 +6,11 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreBookRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
@@ -58,20 +50,20 @@ class StoreBookRequest extends FormRequest
                 'max:255',
             ],
 
-            'genres' => [
+            'genre_ids' => [
                 'required',
                 'array',
                 'min:1',
             ],
 
-            'genres.*' => [
+            'genre_ids.*' => [
                 'integer',
                 'exists:genres,id',
             ],
         ];
     }
 
-    public function messages() : array
+    public function messages(): array
     {
         return [
             'title.required' => 'タイトルを入力してください。',
@@ -96,15 +88,12 @@ class StoreBookRequest extends FormRequest
             'image_url.url' => '画像URLは正しいURL形式で入力してください。',
             'image_url.max' => '画像URLは255文字以内で入力してください。',
 
-            'genres.required' => 'ジャンルを1つ以上選択してください。',
-            'genres.array' => 'ジャンルの指定が正しくありません。',
-            'genres.min' => 'ジャンルを1つ以上選択してください。',
+            'genre_ids.required' => 'ジャンルを1つ以上選択してください。',
+            'genre_ids.array' => 'ジャンルの指定が正しくありません。',
+            'genre_ids.min' => 'ジャンルを1つ以上選択してください。',
 
-            'genres.*.integer' => 'ジャンルの指定が正しくありません。',
-            'genres.*.exists' => '選択されたジャンルが存在しません。',
+            'genre_ids.*.integer' => 'ジャンルの指定が正しくありません。',
+            'genre_ids.*.exists' => '選択されたジャンルが存在しません。',
         ];
     }
-
 }
-
-
