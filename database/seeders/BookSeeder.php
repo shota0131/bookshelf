@@ -7,7 +7,6 @@ use App\Models\Genre;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
-
 class BookSeeder extends Seeder
 {
     /**
@@ -15,7 +14,7 @@ class BookSeeder extends Seeder
      */
     public function run(): void
     {
-        $user = User::first();
+        $users = User::all();
 
         $books = [
             [
@@ -127,7 +126,7 @@ class BookSeeder extends Seeder
             $book = Book::firstOrCreate(
                 ['isbn' => $bookData['isbn']],
                 array_merge($bookData, [
-                    'user_id' => $user->id,
+                    'user_id' => $users->random()->id,
                 ])
             );
 
