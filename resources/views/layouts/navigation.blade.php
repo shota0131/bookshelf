@@ -27,6 +27,12 @@
                     <x-nav-link :href="route('genres.index')" :active="request()->routeIs('genres.*')">
                         {{ __('ジャンル管理') }}
                     </x-nav-link>
+                    <x-nav-link
+                        :href="route('reading-report.index')"
+                        :active="request()->routeIs('reading-report.index')"
+                    >
+                        {{ __('マイレポート') }}
+                    </x-nav-link>
                 </div>
             </div>
 

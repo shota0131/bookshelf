@@ -7,6 +7,7 @@ use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\GenreController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ReviewLikeController;
+use App\Http\Controllers\ReadingReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +24,9 @@ use App\Http\Controllers\ReviewLikeController;
 Route::get('/', [BookController::class, 'index'])
     ->name('books.index');
 
+// CSV出力
+Route::get('/books/csv', [BookController::class, 'csv'])
+    ->name('books.csv');
 // 書籍登録
 Route::get('/books/create', [BookController::class, 'create'])
     ->name('books.create');
@@ -35,6 +39,10 @@ Route::post('/books', [BookController::class, 'store'])
 Route::get('/books/{book}/edit', [BookController::class, 'edit'])
     ->name('books.edit');
 
+// ISBN検索
+Route::get('/books/isbn-search', [BookController::class, 'isbnSearch'])
+    ->name('books.isbn-search');
+
 // 書籍更新
 Route::put('/books/{book}', [BookController::class, 'update'])
     ->name('books.update');
@@ -46,6 +54,11 @@ Route::delete('/books/{book}', [BookController::class, 'destroy'])
 // 書籍詳細
 Route::get('/books/{book}', [BookController::class, 'show'])
     ->name('books.show');
+
+//マイレポート画面
+Route::get('/reading-report', [ReadingReportController::class, 'index'])
+    ->middleware('auth')
+    ->name('reading-report.index');
 
 
 // ジャンル一覧
