@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Enums\ReadingPlanStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ReadingPlan extends Model
 {
@@ -17,8 +19,34 @@ class ReadingPlan extends Model
         'completed_at',
     ];
 
+    /**
+     * 属性のキャストを定義する。
+     *
+     * @var array<string, string>
+     */
     protected $casts = [
         'target_date' => 'date',
         'completed_at' => 'datetime',
+        'status' => ReadingPlanStatus::class,
     ];
+
+    /**
+     * 読書計画に紐づく書籍を取得する。
+     *
+     * @return BelongsTo
+     */
+    public function book(): BelongsTo
+    {
+        return $this->belongsTo(Book::class);
+    }
+
+    /**
+     * 読書計画を所有するユーザーを取得する。
+     *
+     * @return BelongsTo
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }

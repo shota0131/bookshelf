@@ -7,7 +7,8 @@ use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\GenreController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ReviewLikeController;
-use App\Http\Controllers\ReadingReportController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ReadingPlanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,10 +56,10 @@ Route::delete('/books/{book}', [BookController::class, 'destroy'])
 Route::get('/books/{book}', [BookController::class, 'show'])
     ->name('books.show');
 
-//マイレポート画面
-Route::get('/reading-report', [ReadingReportController::class, 'index'])
+// マイ読書レポート
+Route::get('/reports', [ReportController::class, 'index'])
     ->middleware('auth')
-    ->name('reading-report.index');
+    ->name('reports.index');
 
 
 // ジャンル一覧
@@ -105,10 +106,35 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/favorites/{book}/toggle', [FavoriteController::class, 'toggle'])
         ->name('favorites.toggle');
-    
+
     Route::post('/books/{book}/reviews', [ReviewController::class, 'store'])
         ->name('reviews.store');
 
     Route::post('/reviews/{review}/like', [ReviewLikeController::class, 'like'])
     ->name('reviews.like');
+
+
+    // 読書計画一覧
+    Route::get('/reading-plans', [ReadingPlanController::class, 'index'])
+        ->name('reading-plans.index');
+
+    // 読書計画作成画面
+    Route::get('/reading-plans/create', [ReadingPlanController::class, 'create'])
+        ->name('reading-plans.create');
+
+    // 読書計画登録
+    Route::post('/reading-plans', [ReadingPlanController::class, 'store'])
+        ->name('reading-plans.store');
+
+    // 読書計画編集画面
+    Route::get('/reading-plans/{plan}/edit', [ReadingPlanController::class, 'edit'])
+        ->name('reading-plans.edit');
+
+    // 読書計画更新
+    Route::put('/reading-plans/{plan}', [ReadingPlanController::class, 'update'])
+        ->name('reading-plans.update');
+
+    // 読書計画削除
+    Route::delete('/reading-plans/{plan}', [ReadingPlanController::class, 'destroy'])
+        ->name('reading-plans.destroy');
 });

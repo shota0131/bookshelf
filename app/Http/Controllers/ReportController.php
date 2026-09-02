@@ -5,26 +5,30 @@ namespace App\Http\Controllers;
 use App\Models\Review;
 use Illuminate\Support\Facades\Auth;
 
-class ReadingReportController extends Controller
+class ReportController extends Controller
 {
     public function index()
     {
         $user = Auth::user();
 
+        // ログインユーザーのレビュー
         $reviews = Review::with(['book.genres'])
             ->where('user_id', $user->id)
             ->get();
 
+        // 総レビュー数
         $totalReviews = $reviews->count();
 
+        // 読了冊数
         $readBooks = $reviews
             ->pluck('book_id')
             ->unique()
             ->count();
 
+        // 平均評価
         $averageRating = $reviews->avg('rating');
 
-
+        // 評価分布
         $ratingDistribution = [];
 
         for ($rating = 1; $rating <= 5; $rating++) {
@@ -33,14 +37,13 @@ class ReadingReportController extends Controller
                 ->count();
         }
 
-
-
+        // 高評価書籍 TOP5
         $topBooks = $reviews
             ->sortByDesc('rating')
             ->take(5)
             ->values();
 
-
+        // ジャンル別評価
         $genreStats = [];
 
         foreach ($reviews as $review) {
@@ -59,6 +62,7 @@ class ReadingReportController extends Controller
 
         $genreStats = collect($genreStats)
             ->map(function ($genre) {
+
                 $genre['review_count'] = count($genre['ratings']);
 
                 $genre['average_rating'] = collect($genre['ratings'])
@@ -72,8 +76,7 @@ class ReadingReportController extends Controller
             ->take(5)
             ->values();
 
-
-        return view('reading-reports.index', compact(
+        return view('reports.index', compact(
             'totalReviews',
             'readBooks',
             'averageRating',
