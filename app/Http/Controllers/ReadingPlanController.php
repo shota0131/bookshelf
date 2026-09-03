@@ -77,30 +77,36 @@ class ReadingPlanController extends Controller
     /**
      * 読書計画編集画面
      */
-    public function edit(ReadingPlan $readingPlan): View {
+    public function edit(ReadingPlan $plan): View
+    {
         $this->authorize(
             'update',
-            $readingPlan
+            $plan
         );
 
         return view(
             'reading-plans.edit',
-            compact('readingPlan')
+            [
+                'readingPlan' => $plan,
+            ]
         );
     }
 
     /**
      * 読書計画更新
      */
-    public function update(UpdateReadingPlanRequest $request,ReadingPlan $readingPlan):RedirectResponse {
+    public function update(
+        UpdateReadingPlanRequest $request,
+        ReadingPlan $plan
+    ): RedirectResponse {
         $this->authorize(
             'update',
-            $readingPlan
+            $plan
         );
 
         $validated = $request->validated();
 
-        $readingPlan->update([
+        $plan->update([
             'target_date' => $validated['target_date'],
         ]);
 
@@ -115,14 +121,14 @@ class ReadingPlanController extends Controller
     /**
      * 読書計画削除
      */
-    public function destroy(ReadingPlan $readingPlan): RedirectResponse
+    public function destroy(ReadingPlan $plan): RedirectResponse
     {
         $this->authorize(
             'delete',
-            $readingPlan
+            $plan
         );
 
-        $readingPlan->delete();
+        $plan->delete();
 
         return redirect()
             ->route('reading-plans.index')
@@ -131,5 +137,6 @@ class ReadingPlanController extends Controller
                 '読書計画を削除しました。'
             );
     }
+
 }
 

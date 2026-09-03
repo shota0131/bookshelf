@@ -9,6 +9,7 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ReviewLikeController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReadingPlanController;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -113,6 +114,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/reviews/{review}/like', [ReviewLikeController::class, 'like'])
     ->name('reviews.like');
 
+     // 通知一覧
+    Route::get('/notifications', [NotificationController::class, 'index'])
+        ->name('notifications.index');
+
+    // 通知を既読にする
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'read'])
+        ->name('notifications.read');
 
     // 読書計画一覧
     Route::get('/reading-plans', [ReadingPlanController::class, 'index'])
@@ -126,6 +134,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/reading-plans', [ReadingPlanController::class, 'store'])
         ->name('reading-plans.store');
 
+    // 読書計画完了
+    Route::post('/reading-plans/{plan}/complete', [ReadingPlanController::class, 'complete'])
+        ->name('reading-plans.complete');
+
     // 読書計画編集画面
     Route::get('/reading-plans/{plan}/edit', [ReadingPlanController::class, 'edit'])
         ->name('reading-plans.edit');
@@ -137,4 +149,5 @@ Route::middleware('auth')->group(function () {
     // 読書計画削除
     Route::delete('/reading-plans/{plan}', [ReadingPlanController::class, 'destroy'])
         ->name('reading-plans.destroy');
+
 });
