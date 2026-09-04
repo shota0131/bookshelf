@@ -15,6 +15,11 @@ Laravelを使用して、書籍管理に必要な基本的なCRUD機能やAPIを
 - Blade
 - Tailwind CSS
 - Laravel Sanctum（応用機能で使用予定）
+- Docker
+- Docker Compose
+- phpMyAdmin
+- Vite
+- @tailwindcss/forms
 
 ---
 
@@ -49,6 +54,23 @@ Laravelを使用して、書籍管理に必要な基本的なCRUD機能やAPIを
 ### ランキング
 
 - 書籍の平均評価を基準としたランキング表示
+
+### マイ読書レポート
+
+- 自分の読書状況を確認
+- 読書した書籍数の表示
+- 読書中・完了などの読書状況を表示
+- 読書に関する統計情報を表示
+
+### 読書計画
+
+- 読書計画の一覧表示
+- 読書計画の作成
+- 読書計画の編集
+- 読書計画の削除
+- 読書計画のステータス管理
+- 目標日の設定
+- ユーザーごとの読書計画管理
 
 ---
 
@@ -149,6 +171,22 @@ Laravelを使用して、書籍管理に必要な基本的なCRUD機能やAPIを
 | created_at | 作成日時 |
 | updated_at | 更新日時 |
 
+
+### reading_plans
+
+ユーザーごとの読書計画を管理します。
+
+| カラム | 内容 |
+|---|---|
+| id | 読書計画ID |
+| user_id | ユーザーID |
+| book_id | 書籍ID |
+| target_date | 目標日 |
+| status | 読書状態 |
+| completed_at | 完了日時 |
+| created_at | 作成日時 |
+| updated_at | 更新日時 |
+
 ---
 
 ## テーブルのリレーション
@@ -157,15 +195,18 @@ Laravelを使用して、書籍管理に必要な基本的なCRUD機能やAPIを
 - User hasMany Reviews
 - User belongsToMany Books through Favorites
 - User belongsToMany Reviews through ReviewLikes
+- User hasMany ReadingPlans
 - Book belongsTo User
 - Book belongsToMany Genres
 - Book hasMany Reviews
 - Book belongsToMany Users through Favorites
+- Book hasMany ReadingPlans
 - Genre belongsToMany Books
 - Review belongsTo User
 - Review belongsTo Book
 - Review belongsToMany Users through ReviewLikes
-
+- ReadingPlan belongsTo User
+- ReadingPlan belongsTo Book
 ---
 
 ## Seeder
@@ -242,6 +283,21 @@ ISBNを基準に `firstOrCreate()` を使用し、ジャンルは `genres()->syn
 
 `syncWithoutDetaching()` を使用しています。
 
+### ReadingPlanSeeder
+
+読書計画の初期データを登録します。
+
+6件の読書計画を作成し、以下の状態を確認できるようにしています。
+
+- 読書中の読書計画
+- 目標日が当日の読書計画
+- 目標日を過ぎた読書計画
+- 目標日まで余裕がある読書計画
+- 完了済みの読書計画
+- 他ユーザーの読書計画
+
+目標日は `Carbon::today()` を基準に設定しています。
+
 ### DatabaseSeeder
 
 Seederの依存関係を考慮して、以下の順番で実行します。
@@ -252,6 +308,7 @@ Seederの依存関係を考慮して、以下の順番で実行します。
 4. ReviewSeeder
 5. FavoriteSeeder
 6. ReviewLikeSeeder
+7. ReadingPlanSeeder
 
 ---
 
@@ -270,6 +327,11 @@ FormRequestを使用してバリデーション処理をControllerから分離�
 - `StoreGenreRequest`
 - `UpdateGenreRequest`
 
+### 読書計画
+
+- `StoreReadingPlanRequest`
+- `UpdateReadingPlanRequest`
+
 バリデーションエラーメッセージは日本語で定義しています。
 
 主なバリデーション内容：
@@ -282,6 +344,22 @@ FormRequestを使用してバリデーション処理をControllerから分離�
 - ジャンル選択チェック
 - URL形式チェック
 - ジャンル名の一意性チェック
+- 書籍の必須チェック
+- 登録されている書籍かチェック
+- 目標日の必須チェック
+- 目標日の形式チェック
+
+---
+
+## 認可
+
+読書計画はユーザーごとに管理しています。
+
+- 自分の読書計画のみ編集可能
+- 自分の読書計画のみ削除可能
+- 他ユーザーの読書計画を編集・削除しようとした場合は403エラーとする
+
+Policyを使用してユーザーごとの操作権限を制御しています。
 
 ---
 
@@ -307,6 +385,8 @@ APIレスポンスにはLaravel API Resourceを使用しています。
 - `BookDetailResource`
 - `ReviewResource`
 
+
+
 ---
 
 ## API Controller
@@ -319,3 +399,5 @@ app/Http/Controllers/Api/V1/BookController.php
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+
