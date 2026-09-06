@@ -16,14 +16,21 @@ class StoreReviewRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            'rating' => ['required', 'integer', 'between:1,5'],
-            'comment' => ['required', 'string'],
+            'rating' => [
+                'required',
+                'integer',
+                'between:1,5',
+            ],
+
+            'comment' => [
+                'required',
+                'string',
+                'max:1000',
+            ],
         ];
     }
 
@@ -33,8 +40,10 @@ class StoreReviewRequest extends FormRequest
             'rating.required' => '評価を入力してください。',
             'rating.integer' => '評価は整数で入力してください。',
             'rating.between' => '評価は1〜5の範囲で入力してください。',
+
             'comment.required' => 'コメントを入力してください。',
             'comment.string' => 'コメントは文字列で入力してください。',
+            'comment.max' => 'コメントは1000文字以内で入力してください。',
         ];
     }
 }

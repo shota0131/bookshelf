@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreReadingPlanRequest extends FormRequest
 {
@@ -23,7 +24,12 @@ class StoreReadingPlanRequest extends FormRequest
             'book_id' => [
                 'required',
                 'exists:books,id',
-                'unique:reading_plans,book_id,NULL,id,user_id,' . auth()->id(),
+                Rule::unique('reading_plans', 'book_id')
+                    ->where(function ($query) {
+                        return $query
+                            ->where('user_id', auth()->id())
+                            ->where('status', 'in_progress');
+                    }),
             ],
 
             'target_date' => [
@@ -42,7 +48,7 @@ class StoreReadingPlanRequest extends FormRequest
         return [
             'book_id.required' => '書籍を選択してください。',
             'book_id.exists' => '選択した書籍が存在しません。',
-            'book_id.unique' => 'この書籍の読書計画はすでに登録されています。',
+            'book_id.unique' => 'この書籍は現在読書中の計画がすでに登録されています。',
 
             'target_date.required' => '目標日を入力してください。',
             'target_date.date' => '正しい日付を入力してください。',

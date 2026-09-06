@@ -41,7 +41,6 @@ class StoreBookRequest extends FormRequest
             'description' => [
                 'nullable',
                 'string',
-                'max:2000',
             ],
 
             'image_url' => [
@@ -83,7 +82,6 @@ class StoreBookRequest extends FormRequest
             'published_date.date' => '有効な出版日を入力してください。',
 
             'description.string' => '説明は文字列で入力してください。',
-            'description.max' => '説明は2000文字以内で入力してください。',
 
             'image_url.url' => '画像URLは正しいURL形式で入力してください。',
             'image_url.max' => '画像URLは255文字以内で入力してください。',
