@@ -16,29 +16,33 @@ class BookController extends Controller
         $books = Book::with(['genres', 'user'])
             ->withAvg('reviews', 'rating')
 
-            ->when($request->keyword, function ($query, $keyword) {
+            // キーワード検索
+            ->when($request->filled('keyword'), function ($query) use ($request) {
+                $keyword = $request->input('keyword');
+
                 $query->where(function ($query) use ($keyword) {
                     $query->where('title', 'like', "%{$keyword}%")
                         ->orWhere('author', 'like', "%{$keyword}%");
                 });
             })
 
-            ->when($request->genre_id, function ($query, $genreId) {
+            // ジャンル絞り込み
+            ->when($request->filled('genre_id'), function ($query) use ($request) {
+                $genreId = $request->input('genre_id');
+
                 $query->whereHas('genres', function ($query) use ($genreId) {
                     $query->where('genres.id', $genreId);
                 });
             })
 
-            ->when($request->sort === 'oldest', function ($query) {
+            // 並び順
+            ->when($request->input('sort', 'newest') === 'oldest', function ($query) {
                 $query->oldest();
             })
-            ->when($request->sort === 'title', function ($query) {
-                $query->orderBy('title');
-            })
-            ->when($request->sort === 'rating', function ($query) {
+            ->when($request->input('sort', 'newest') === 'rating', function ($query) {
                 $query->orderByDesc('reviews_avg_rating');
             })
-            ->when(!$request->sort, function ($query) {
+            ->when($request->input('sort', 'newest') === 'newest', function ($query) {
                 $query->latest();
             })
 
