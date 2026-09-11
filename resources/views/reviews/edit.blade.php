@@ -32,7 +32,7 @@
                                             required
                                         >
                                         <span
-                                            class="star text-2xl text-gray-300 hover:text-yellow-400"
+                                            class="star text-2xl text-gray-300"
                                             data-rating="{{ $i }}"
                                         >★</span>
                                     </label>
