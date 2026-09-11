@@ -29,6 +29,7 @@ Route::get('/', [BookController::class, 'index'])
 // CSV出力
 Route::get('/books/csv', [BookController::class, 'csv'])
     ->name('books.csv');
+
 // 書籍登録
 Route::get('/books/create', [BookController::class, 'create'])
     ->name('books.create');
@@ -62,7 +63,6 @@ Route::get('/reports', [ReportController::class, 'index'])
     ->middleware('auth')
     ->name('reports.index');
 
-
 // ジャンル一覧
 Route::get('/genres', [GenreController::class, 'index'])
     ->name('genres.index');
@@ -91,30 +91,41 @@ Route::put('/genres/{genre}', [GenreController::class, 'update'])
 Route::delete('/genres/{genre}', [GenreController::class, 'destroy'])
     ->name('genres.destroy');
 
-// レビュー編集
-Route::get('/reviews/{review}/edit', function ($review) {
-    return view('reviews.edit');
-})->name('reviews.edit');
-
-
 // ランキング
 Route::get('/ranking', [RankingController::class, 'index'])
     ->name('ranking.index');
 
 Route::middleware('auth')->group(function () {
+
+    // お気に入り一覧
     Route::get('/favorites', [FavoriteController::class, 'index'])
         ->name('favorites.index');
 
+    // お気に入り登録・解除
     Route::post('/favorites/{book}/toggle', [FavoriteController::class, 'toggle'])
         ->name('favorites.toggle');
 
+    // レビュー投稿
     Route::post('/books/{book}/reviews', [ReviewController::class, 'store'])
         ->name('reviews.store');
 
-    Route::post('/reviews/{review}/like', [ReviewLikeController::class, 'like'])
-    ->name('reviews.like');
+    // レビュー編集画面
+    Route::get('/reviews/{review}/edit', [ReviewController::class, 'edit'])
+        ->name('reviews.edit');
 
-     // 通知一覧
+    // レビュー更新
+    Route::put('/reviews/{review}', [ReviewController::class, 'update'])
+        ->name('reviews.update');
+
+    // レビュー削除
+    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])
+        ->name('reviews.destroy');
+
+    // レビューいいね
+    Route::post('/reviews/{review}/like', [ReviewLikeController::class, 'like'])
+        ->name('reviews.like');
+
+    // 通知一覧
     Route::get('/notifications', [NotificationController::class, 'index'])
         ->name('notifications.index');
 
@@ -149,5 +160,4 @@ Route::middleware('auth')->group(function () {
     // 読書計画削除
     Route::delete('/reading-plans/{plan}', [ReadingPlanController::class, 'destroy'])
         ->name('reading-plans.destroy');
-
 });

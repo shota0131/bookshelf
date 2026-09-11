@@ -19,14 +19,26 @@
 
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700 mb-2">評価 <span class="text-red-500">*</span></label>
-                            <div class="flex gap-2">
+
+                            <div class="flex gap-2" id="rating-stars">
                                 @for($i = 1; $i <= 5; $i++)
                                     <label class="cursor-pointer">
-                                        <input type="radio" name="rating" value="{{ $i }}" class="sr-only peer" {{ old('rating', $review->rating) == $i ? 'checked' : '' }} required>
-                                        <span class="text-2xl peer-checked:text-yellow-400 text-gray-300 hover:text-yellow-400">★</span>
+                                        <input
+                                            type="radio"
+                                            name="rating"
+                                            value="{{ $i }}"
+                                            class="sr-only"
+                                            {{ old('rating', $review->rating) == $i ? 'checked' : '' }}
+                                            required
+                                        >
+                                        <span
+                                            class="star text-2xl text-gray-300 hover:text-yellow-400"
+                                            data-rating="{{ $i }}"
+                                        >★</span>
                                     </label>
                                 @endfor
                             </div>
+
                             @error('rating')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -51,4 +63,37 @@
             </div>
         </div>
     </div>
+
+    <script>
+        const stars = document.querySelectorAll('#rating-stars .star');
+        const radios = document.querySelectorAll('#rating-stars input[name="rating"]');
+
+        function updateStars(rating) {
+            stars.forEach((star) => {
+                const starRating = Number(star.dataset.rating);
+
+                if (starRating <= rating) {
+                    star.classList.remove('text-gray-300');
+                    star.classList.add('text-yellow-400');
+                } else {
+                    star.classList.remove('text-yellow-400');
+                    star.classList.add('text-gray-300');
+                }
+            });
+        }
+
+        radios.forEach((radio) => {
+            radio.addEventListener('change', () => {
+                updateStars(Number(radio.value));
+            });
+        });
+
+        const checkedRadio = document.querySelector(
+            '#rating-stars input[name="rating"]:checked'
+        );
+
+        if (checkedRadio) {
+            updateStars(Number(checkedRadio.value));
+        }
+    </script>
 </x-app-layout>
