@@ -43,7 +43,7 @@ Route::get('/books/{book}/edit', [BookController::class, 'edit'])
     ->name('books.edit');
 
 // ISBN検索
-Route::get('/books/isbn-search', [BookController::class, 'isbnSearch'])
+Route::get('/books/isbn/{isbn}', [BookController::class, 'isbnSearch'])
     ->name('books.isbn-search');
 
 // 書籍更新
@@ -102,7 +102,7 @@ Route::middleware('auth')->group(function () {
         ->name('favorites.index');
 
     // お気に入り登録・解除
-    Route::post('/favorites/{book}/toggle', [FavoriteController::class, 'toggle'])
+    Route::post('/books/{book}/favorites', [FavoriteController::class, 'toggle'])
         ->name('favorites.toggle');
 
     // レビュー投稿

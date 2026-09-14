@@ -100,7 +100,7 @@
                 try {
 
                     const response = await fetch(
-                        `{{ route('books.isbn-search') }}?isbn=${isbn}`
+                        `/books/isbn/${isbn}`
                     );
 
                     const data = await response.json();
