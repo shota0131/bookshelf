@@ -59,4 +59,24 @@ class ReviewTest extends TestCase
 
         $response->assertSessionHasErrors('rating');
     }
+
+        /** @test */
+    public function レビューコメントは1000文字以内である(): void
+    {
+        $user = User::factory()->create();
+        $book = Book::factory()->create();
+
+        $this->actingAs($user);
+
+        $response = $this->post(
+            route('reviews.store', $book),
+            [
+                'rating' => 5,
+                'comment' => str_repeat('あ', 1001),
+            ]
+        );
+
+        $response->assertSessionHasErrors('comment');
+    }
+
 }
