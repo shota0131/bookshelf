@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\BookIndexRequest;
-use App\Http\Requests\StoreBookRequest;
-use App\Http\Requests\UpdateBookRequest;
+use App\Http\Requests\Api\BookIndexRequest;
+use App\Http\Requests\Api\StoreBookRequest;
+use App\Http\Requests\Api\UpdateBookRequest;
 use App\Http\Resources\BookDetailResource;
 use App\Http\Resources\BookResource;
 use App\Models\Book;
@@ -82,6 +82,8 @@ class BookController extends Controller
         UpdateBookRequest $request,
         Book $book
     ): BookDetailResource {
+        $this->authorize('update', $book);
+
         $validated = $request->validated();
 
         $genreIds = $validated['genre_ids'];
@@ -105,6 +107,8 @@ class BookController extends Controller
      */
     public function destroy(Book $book): JsonResponse
     {
+        $this->authorize('delete', $book);
+
         $book->genres()->detach();
 
         $book->reviews()->delete();

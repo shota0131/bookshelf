@@ -63,13 +63,13 @@ class StoreBookRequest extends FormRequest
                 'exists:users,id',
             ],
 
-            'genres' => [
+            'genre_ids' => [
                 'required',
                 'array',
                 'min:1',
             ],
 
-            'genres.*' => [
+            'genre_ids.*' => [
                 'integer',
                 'exists:genres,id',
             ],
@@ -104,12 +104,12 @@ class StoreBookRequest extends FormRequest
             'user_id.integer' => '登録者IDは整数で指定してください。',
             'user_id.exists' => '指定されたユーザーが存在しません。',
 
-            'genres.required' => 'ジャンルを1つ以上指定してください。',
-            'genres.array' => 'ジャンルの指定が正しくありません。',
-            'genres.min' => 'ジャンルを1つ以上指定してください。',
+            'genre_ids.required' => 'ジャンルを1つ以上指定してください。',
+            'genre_ids.array' => 'ジャンルの指定が正しくありません。',
+            'genre_ids.min' => 'ジャンルを1つ以上指定してください。',
 
-            'genres.*.integer' => 'ジャンルIDは整数で指定してください。',
-            'genres.*.exists' => '指定されたジャンルが存在しません。',
+            'genre_ids.*.integer' => 'ジャンルIDは整数で指定してください。',
+            'genre_ids.*.exists' => '指定されたジャンルが存在しません。',
         ];
     }
 }

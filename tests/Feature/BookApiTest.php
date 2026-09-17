@@ -60,7 +60,7 @@ class BookApiTest extends TestCase
             'description' => null,
             'image_url' => null,
             'user_id' => $user->id,
-            'genres' => [$genre->id],
+            'genre_ids' => [$genre->id],
         ];
 
         Sanctum::actingAs($user);
@@ -94,7 +94,7 @@ class BookApiTest extends TestCase
             'isbn',
             'published_date',
             'user_id',
-            'genres',
+            'genre_ids',
         ]);
     }
 
@@ -112,7 +112,7 @@ class BookApiTest extends TestCase
             'description' => null,
             'image_url' => null,
             'user_id' => $user->id,
-            'genres' => [$genre->id],
+            'genre_ids' => [$genre->id],
         ]);
 
         $response->assertStatus(401);
@@ -137,7 +137,7 @@ class BookApiTest extends TestCase
                 'description' => $book->description,
                 'image_url' => $book->image_url,
                 'user_id' => $user->id,
-                'genres' => $book->genres->pluck('id')->toArray(),
+                'genre_ids' => $book->genres->pluck('id')->toArray(),
             ]
         );
 
@@ -182,7 +182,7 @@ class BookApiTest extends TestCase
                 'description' => $book->description,
                 'image_url' => $book->image_url,
                 'user_id' => $user->id,
-                'genres' => [$genre->id],
+                'genre_ids' => [$genre->id],
             ]
         );
 
@@ -218,7 +218,7 @@ class BookApiTest extends TestCase
                 'description' => $book->description,
                 'image_url' => $book->image_url,
                 'user_id' => $owner->id,
-                'genres' => [$genre->id],
+                'genre_ids' => [$genre->id],
             ]
         );
 
