@@ -219,10 +219,52 @@ class BookTest extends TestCase
     }
 
     /** @test */
-public function 書籍削除時に関連データも適切に処理される(): void
-{
-    // Review / Favorite / genre pivot を作成
-    // 書籍削除
-    // 関連データが削除されていることを確認
-}
+    public function 書籍削除時に関連データも適切に処理される(): void
+    {
+        $user = User::factory()->create();
+        $reviewUser = User::factory()->create();
+
+        $book = Book::factory()->create([
+            'user_id' => $user->id,
+        ]);
+
+        $genre = \App\Models\Genre::factory()->create();
+
+        // 書籍とジャンルを紐づける
+        $book->genres()->attach($genre->id);
+
+        // レビューを作成
+        $review = \App\Models\Review::factory()->create([
+            'book_id' => $book->id,
+            'user_id' => $reviewUser->id,
+        ]);
+
+        // お気に入りを作成
+        $book->favoritedByUsers()->attach($reviewUser->id);
+
+        // 書籍を削除
+        $this->actingAs($user);
+
+        $response = $this->delete(
+            route('books.destroy', $book)
+        );
+
+        $response->assertRedirect();
+
+        // 書籍が削除されている
+        $this->assertDatabaseMissing('books', [
+            'id' => $book->id,
+        ]);
+
+        // レビューが削除されている
+        $this->assertDatabaseMissing('reviews', [
+            'id' => $review->id,
+        ]);
+
+        // ジャンルとのpivotが削除されている
+        $this->assertDatabaseMissing('book_genre', [
+            'book_id' => $book->id,
+            'genre_id' => $genre->id,
+        ]);
+    }
 }

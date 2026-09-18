@@ -30,29 +30,9 @@ Route::get('/', [BookController::class, 'index'])
 Route::get('/books/csv', [BookController::class, 'csv'])
     ->name('books.csv');
 
-// 書籍登録
-Route::get('/books/create', [BookController::class, 'create'])
-    ->name('books.create');
-
-// 書籍登録処理
-Route::post('/books', [BookController::class, 'store'])
-    ->name('books.store');
-
-// 書籍編集
-Route::get('/books/{book}/edit', [BookController::class, 'edit'])
-    ->name('books.edit');
-
 // ISBN検索
 Route::get('/books/isbn/{isbn}', [BookController::class, 'isbnSearch'])
     ->name('books.isbn-search');
-
-// 書籍更新
-Route::put('/books/{book}', [BookController::class, 'update'])
-    ->name('books.update');
-
-// 書籍削除
-Route::delete('/books/{book}', [BookController::class, 'destroy'])
-    ->name('books.destroy');
 
 // 書籍詳細
 Route::get('/books/{book}', [BookController::class, 'show'])
@@ -96,6 +76,26 @@ Route::get('/ranking', [RankingController::class, 'index'])
     ->name('ranking.index');
 
 Route::middleware('auth')->group(function () {
+
+    // 書籍登録
+    Route::get('/books/create', [BookController::class, 'create'])
+        ->name('books.create');
+
+    // 書籍登録処理
+    Route::post('/books', [BookController::class, 'store'])
+        ->name('books.store');
+
+    // 書籍編集
+    Route::get('/books/{book}/edit', [BookController::class, 'edit'])
+        ->name('books.edit');
+
+    // 書籍更新
+    Route::put('/books/{book}', [BookController::class, 'update'])
+        ->name('books.update');
+
+    // 書籍削除
+    Route::delete('/books/{book}', [BookController::class, 'destroy'])
+        ->name('books.destroy');
 
     // お気に入り一覧
     Route::get('/favorites', [FavoriteController::class, 'index'])
