@@ -240,7 +240,7 @@ class BookTest extends TestCase
         ]);
 
         // お気に入りを作成
-        $book->favoritedByUsers()->attach($reviewUser->id);
+        $book->favoriteUsers()->attach($reviewUser->id);
 
         // 書籍を削除
         $this->actingAs($user);

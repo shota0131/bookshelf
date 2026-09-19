@@ -98,11 +98,9 @@ class BookController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
-    public function isbnSearch(Request $request)
+    public function isbnSearch(string $isbn)
     {
-        $isbn = $request->input('isbn');
-
-        if (!$isbn || !preg_match('/^\d{13}$/', $isbn)) {
+        if (!preg_match('/^\d{13}$/', $isbn)) {
             return response()->json([
                 'message' => 'ISBNは13桁の数字で入力してください。',
             ], 422);
