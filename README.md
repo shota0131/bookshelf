@@ -3,6 +3,10 @@
 書籍の登録・管理・レビュー・お気に入りなどを行う書籍管理アプリです。
 
 Laravelを使用して、書籍管理に必要な基本的なCRUD機能やAPIを実装しています。
+---
+## 作成者
+
+楠本 将太
 
 ---
 
@@ -14,7 +18,7 @@ Laravelを使用して、書籍管理に必要な基本的なCRUD機能やAPIを
 - MySQL
 - Blade
 - Tailwind CSS
-- Laravel Sanctum（応用機能で使用予定）
+- Laravel Sanctum
 - Docker
 - Docker Compose
 - phpMyAdmin
@@ -24,8 +28,6 @@ Laravelを使用して、書籍管理に必要な基本的なCRUD機能やAPIを
 ---
 
 ## 主な機能
-
-現在実装中の機能です。
 
 ### 書籍管理
 
@@ -37,6 +39,8 @@ Laravelを使用して、書籍管理に必要な基本的なCRUD機能やAPIを
 - ジャンルとの紐付け
 - 書籍の平均評価表示
 - レビュー件数表示
+- ISBNによる書籍情報検索
+- CSV出力
 
 ### ジャンル管理
 
@@ -71,7 +75,13 @@ Laravelを使用して、書籍管理に必要な基本的なCRUD機能やAPIを
 - 読書計画のステータス管理
 - 目標日の設定
 - ユーザーごとの読書計画管理
+- 読書計画の重複登録防止
+- 読書計画の完了処理
 
+### 通知
+- 通知一覧表示
+- 読書計画などに関する通知表示
+- 未読通知の確認
 ---
 
 ## データベース
@@ -141,11 +151,8 @@ Laravelを使用して、書籍管理に必要な基本的なCRUD機能やAPIを
 
 | カラム | 内容 |
 |---|---|
-| id | ID |
 | book_id | 書籍ID |
 | genre_id | ジャンルID |
-| created_at | 作成日時 |
-| updated_at | 更新日時 |
 
 ### favorites
 
@@ -153,11 +160,8 @@ Laravelを使用して、書籍管理に必要な基本的なCRUD機能やAPIを
 
 | カラム | 内容 |
 |---|---|
-| id | お気に入りID |
 | user_id | ユーザーID |
 | book_id | 書籍ID |
-| created_at | 作成日時 |
-| updated_at | 更新日時 |
 
 ### review_likes
 
@@ -165,11 +169,8 @@ Laravelを使用して、書籍管理に必要な基本的なCRUD機能やAPIを
 
 | カラム | 内容 |
 |---|---|
-| id | いいねID |
 | user_id | ユーザーID |
 | review_id | レビューID |
-| created_at | 作成日時 |
-| updated_at | 更新日時 |
 
 
 ### reading_plans
@@ -184,6 +185,21 @@ Laravelを使用して、書籍管理に必要な基本的なCRUD機能やAPIを
 | target_date | 目標日 |
 | status | 読書状態 |
 | completed_at | 完了日時 |
+| created_at | 作成日時 |
+| updated_at | 更新日時 |
+
+### notifications
+
+ユーザーへの通知を管理します。
+
+| カラム | 内容 |
+|---|---|
+| id | 通知ID |
+| type | 通知タイプ |
+| notifiable_type | 通知対象のモデル |
+| notifiable_id | 通知対象のID |
+| data | 通知データ |
+| read_at | 既読日時 |
 | created_at | 作成日時 |
 | updated_at | 更新日時 |
 
@@ -311,6 +327,12 @@ Seederの依存関係を考慮して、以下の順番で実行します。
 7. ReadingPlanSeeder
 
 ---
+### ファクトリー
+テストで使用するデータを作成するためにModel Factoryを使用しています。
+Factoryを使用することで、テストごとに必要なユーザーや書籍などのデータを作成しています。
+テストではFactoryを使用して、正常系だけでなくバリデーションやユーザーごとの権限などの確認を行っています。
+
+---
 
 ## バリデーション
 
@@ -322,10 +344,19 @@ FormRequestを使用してバリデーション処理をControllerから分離�
 - `StoreBookRequest`
 - `UpdateBookRequest`
 
+### API 書籍
+- `App\Http\Requests\Api\BookIndexRequest`
+- `App\Http\Requests\Api\StoreBookRequest`
+- `App\Http\Requests\Api\UpdateBookRequest`
+
 ### ジャンル
 
 - `StoreGenreRequest`
 - `UpdateGenreRequest`
+
+### レビュー
+- `StoreReviewRequest`
+- `UpdateReviewRequest`
 
 ### 読書計画
 
@@ -370,15 +401,69 @@ FormRequestを使用してバリデーション処理をControllerから分離�
 ---
 
 ## 認可
-
-読書計画はユーザーごとに管理しています。
-
-- 自分の読書計画のみ編集可能
-- 自分の読書計画のみ削除可能
-- 他ユーザーの読書計画を編集・削除しようとした場合は403エラーとする
-
 Policyを使用してユーザーごとの操作権限を制御しています。
 
+読書計画
+- 自分の読書計画のみ編集可能
+- 自分の読書計画のみ削除可能
+- 他ユーザーの読書計画を編集・削除しようとした場合は403エラー
+レビュー
+- 自分のレビューのみ編集可能
+- 自分のレビューのみ削除可能
+---
+## テスト
+LaravelのFeature TestとUnit Testを使用して、アプリケーションの動作確認を行っています。
+
+### 書籍
+- ゲストによる書籍一覧・詳細の閲覧
+- ゲストによる書籍登録・編集画面へのアクセス制御
+- 書籍登録
+- 書籍編集
+- 書籍削除
+- 必須項目のバリデーション
+- ISBNの13桁チェック
+- ISBNの重複チェック
+- 書籍削除時の関連データ処理
+
+### API
+- 書籍一覧API
+- 書籍詳細API
+- 存在しない書籍IDのエラー
+- APIからの書籍登録
+- APIのバリデーションエラー
+- 未認証ユーザーのアクセス制御
+- 書籍登録者本人による更新・削除
+- 他ユーザーによる更新・削除のアクセス制御
+
+### お気に入り
+- お気に入り登録
+- お気に入り解除
+- ゲストユーザーのアクセス制御
+
+### ISBN検索
+- ISBNからの書籍情報取得
+- 外部APIエラー時のエラー処理
+
+### ランキング
+- 平均評価順のランキング表示
+- TOP10までの表示
+
+### 読書計画
+- 読書計画の作成
+- 目標日のバリデーション
+- 同一ユーザー・同一書籍の進行中計画の重複防止
+- 完了済み計画の再登録
+
+### レビュー
+- レビュー投稿
+- 評価値のバリデーション
+- コメントの文字数バリデーション
+
+### テストの実行方法
+以下のコマンドでテストを実行できます。
+
+
+./vendor/bin/sail artisan test
 ---
 
 ## API
@@ -397,23 +482,59 @@ Policyを使用してユーザーごとの操作権限を制御しています�
 
 APIレスポンスにはLaravel API Resourceを使用しています。
 
+### API Resource
 現在作成しているResource：
 
 - `BookResource`
 - `BookDetailResource`
 - `ReviewResource`
 
-
-
+### API認証
+Laravel Sanctumを使用してAPIの認証を行っています。
+書籍の登録・更新・削除では認証が必要です。
+また、書籍の更新・削除では登録者本人のみ操作できるようにしています。
 ---
 
 ## API Controller
 
 API用のBookControllerを作成しています。
 
-```text
 app/Http/Controllers/Api/V1/BookController.php
+---
+## 環境構築
+1. リポジトリをクローン
+    git clone <リポジトリURL>
+    cd bookshelf-app
 
+2. .envを作成
+    cp .env.example .env
+
+3. Dockerコンテナを起動
+    ./vendor/bin/sail up -d
+
+4. アプリケーションキーを生成
+    ./vendor/bin/sail artisan key:generate
+
+5. マイグレーションを実行
+    ./vendor/bin/sail artisan migrate
+
+6. Seederを実行
+    ./vendor/bin/sail artisan db:seed
+
+7. フロントエンドを起動
+    npm install
+    npm run dev
+
+---
+## 開発環境
+    http://localhost
+
+    http://localhost:8080
+---
+## ER図
+
+![ER図](er.png)
+---
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
