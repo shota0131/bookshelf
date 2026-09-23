@@ -18,6 +18,14 @@ class ReadingPlanController extends Controller
      */
     public function index(Request $request): View
     {
+        // 期限日を過ぎた「読書中」の計画を「期限切れ」に変更
+        ReadingPlan::where('user_id', auth()->id())
+            ->where('status', ReadingPlanStatus::IN_PROGRESS->value)
+            ->whereDate('target_date', '<', today())
+            ->update([
+                'status' => ReadingPlanStatus::EXPIRED->value,
+            ]);
+
         $query = ReadingPlan::with('book')
             ->where('user_id', auth()->id());
 
@@ -38,6 +46,7 @@ class ReadingPlanController extends Controller
             compact('readingPlans')
         );
     }
+
 
     /**
      * 読書計画作成画面
@@ -135,6 +144,29 @@ class ReadingPlanController extends Controller
             ->with(
                 'success',
                 '読書計画を削除しました。'
+            );
+    }
+
+    /**
+     * 読書計画完了
+    */
+    public function complete(ReadingPlan $plan): RedirectResponse
+    {
+        $this->authorize(
+            'update',
+            $plan
+        );
+
+        $plan->update([
+            'status' => ReadingPlanStatus::COMPLETED,
+            'completed_at' => now(),
+        ]);
+
+        return redirect()
+            ->route('reading-plans.index')
+            ->with(
+                'success',
+                '読書計画を完了しました。'
             );
     }
 

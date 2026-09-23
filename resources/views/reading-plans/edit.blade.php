@@ -37,14 +37,14 @@
                             <div class="text-sm text-gray-500">
                                 現在の状態：
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                    @if ($readingPlan->status === 'in_progress')
+                                    @if ($readingPlan->status === ReadingPlanStatus::IN_PROGRESS)
                                         読書中
-                                    @elseif ($readingPlan->status === 'completed')
+                                    @elseif ($readingPlan->status === ReadingPlanStatus::COMPLETED)
                                         完了
-                                    @elseif ($readingPlan->status === 'expired')
+                                    @elseif ($readingPlan->status === ReadingPlanStatus::EXPIRED)
                                         期限切れ
                                     @else
-                                        {{ $readingPlan->status }}
+                                        {{ $readingPlan->status->value }}
                                     @endif
                                 </span>
                             </div>
