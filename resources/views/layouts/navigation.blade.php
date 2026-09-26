@@ -12,39 +12,63 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('books.index')" :active="request()->routeIs('books.index')">
+                    <!-- 書籍一覧：公開 -->
+                    <x-nav-link
+                        :href="route('books.index')"
+                        :active="request()->routeIs('books.index')"
+                    >
                         {{ __('書籍一覧') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="route('ranking.index')" :active="request()->routeIs('ranking.index')">
+                    <!-- ランキング：公開 -->
+                    <x-nav-link
+                        :href="route('ranking.index')"
+                        :active="request()->routeIs('ranking.index')"
+                    >
                         {{ __('ランキング') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="route('books.create')" :active="request()->routeIs('books.create')">
-                        {{ __('書籍登録') }}
-                    </x-nav-link>
+                    @auth
+                        <!-- 書籍登録：ログイン必須 -->
+                        <x-nav-link
+                            :href="route('books.create')"
+                            :active="request()->routeIs('books.create')"
+                        >
+                            {{ __('書籍登録') }}
+                        </x-nav-link>
 
-                    <x-nav-link :href="route('favorites.index')" :active="request()->routeIs('favorites.index')">
-                        {{ __('お気に入り') }}
-                    </x-nav-link>
+                        <!-- お気に入り：ログイン必須 -->
+                        <x-nav-link
+                            :href="route('favorites.index')"
+                            :active="request()->routeIs('favorites.index')"
+                        >
+                            {{ __('お気に入り') }}
+                        </x-nav-link>
 
-                    <x-nav-link :href="route('genres.index')" :active="request()->routeIs('genres.*')">
-                        {{ __('ジャンル管理') }}
-                    </x-nav-link>
+                        <!-- ジャンル管理：ログイン必須 -->
+                        <x-nav-link
+                            :href="route('genres.index')"
+                            :active="request()->routeIs('genres.*')"
+                        >
+                            {{ __('ジャンル管理') }}
+                        </x-nav-link>
 
-                    <x-nav-link
-                        :href="route('reports.index')"
-                        :active="request()->routeIs('reports.index')"
-                    >
-                        {{ __('マイレポート') }}
-                    </x-nav-link>
+                        <!-- マイレポート：ログイン必須 -->
+                        <x-nav-link
+                            :href="route('reports.index')"
+                            :active="request()->routeIs('reports.index')"
+                        >
+                            {{ __('マイレポート') }}
+                        </x-nav-link>
 
-                    <x-nav-link
-                        :href="route('reading-plans.index')"
-                        :active="request()->routeIs('reading-plans.index')"
-                    >
-                        {{ __('読書計画') }}
-                    </x-nav-link>
+                        <!-- 読書計画：ログイン必須 -->
+                        <x-nav-link
+                            :href="route('reading-plans.index')"
+                            :active="request()->routeIs('reading-plans.index')"
+                        >
+                            {{ __('読書計画') }}
+                        </x-nav-link>
+                    @endauth
                 </div>
             </div>
 
@@ -168,7 +192,7 @@
                             stroke-linecap="round"
                             stroke-linejoin="round"
                             stroke-width="2"
-                            d="M4 6h16M4 12h16M4 18h16"
+                            d="M4 6h16M4 12h16M4 18h-16"
                         />
 
                         <path
@@ -191,6 +215,7 @@
         class="hidden sm:hidden"
     >
         <div class="pt-2 pb-3 space-y-1">
+            <!-- 書籍一覧：公開 -->
             <x-responsive-nav-link
                 :href="route('books.index')"
                 :active="request()->routeIs('books.index')"
@@ -198,6 +223,7 @@
                 {{ __('書籍一覧') }}
             </x-responsive-nav-link>
 
+            <!-- ランキング：公開 -->
             <x-responsive-nav-link
                 :href="route('ranking.index')"
                 :active="request()->routeIs('ranking.index')"
@@ -205,26 +231,47 @@
                 {{ __('ランキング') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link
-                :href="route('books.create')"
-                :active="request()->routeIs('books.create')"
-            >
-                {{ __('書籍登録') }}
-            </x-responsive-nav-link>
+            @auth
+                <!-- 書籍登録：ログイン必須 -->
+                <x-responsive-nav-link
+                    :href="route('books.create')"
+                    :active="request()->routeIs('books.create')"
+                >
+                    {{ __('書籍登録') }}
+                </x-responsive-nav-link>
 
-            <x-responsive-nav-link
-                :href="route('favorites.index')"
-                :active="request()->routeIs('favorites.index')"
-            >
-                {{ __('お気に入り') }}
-            </x-responsive-nav-link>
+                <!-- お気に入り：ログイン必須 -->
+                <x-responsive-nav-link
+                    :href="route('favorites.index')"
+                    :active="request()->routeIs('favorites.index')"
+                >
+                    {{ __('お気に入り') }}
+                </x-responsive-nav-link>
 
-            <x-responsive-nav-link
-                :href="route('genres.index')"
-                :active="request()->routeIs('genres.*')"
-            >
-                {{ __('ジャンル管理') }}
-            </x-responsive-nav-link>
+                <!-- ジャンル管理：ログイン必須 -->
+                <x-responsive-nav-link
+                    :href="route('genres.index')"
+                    :active="request()->routeIs('genres.*')"
+                >
+                    {{ __('ジャンル管理') }}
+                </x-responsive-nav-link>
+
+                <!-- マイレポート：ログイン必須 -->
+                <x-responsive-nav-link
+                    :href="route('reports.index')"
+                    :active="request()->routeIs('reports.index')"
+                >
+                    {{ __('マイレポート') }}
+                </x-responsive-nav-link>
+
+                <!-- 読書計画：ログイン必須 -->
+                <x-responsive-nav-link
+                    :href="route('reading-plans.index')"
+                    :active="request()->routeIs('reading-plans.index')"
+                >
+                    {{ __('読書計画') }}
+                </x-responsive-nav-link>
+            @endauth
         </div>
 
         <!-- Responsive Settings Options -->
@@ -291,4 +338,5 @@
         </div>
     </div>
 </nav>
+
 
