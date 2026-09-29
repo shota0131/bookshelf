@@ -18,17 +18,11 @@ class ReadingPlanController extends Controller
      */
     public function index(Request $request): View
     {
-        // 期限日を過ぎた「読書中」の計画を「期限切れ」に変更
-        ReadingPlan::where('user_id', auth()->id())
-            ->where('status', ReadingPlanStatus::IN_PROGRESS->value)
-            ->whereDate('target_date', '<', today())
-            ->update([
-                'status' => ReadingPlanStatus::EXPIRED->value,
-            ]);
-
+        // ログインユーザーの読書計画を取得
         $query = ReadingPlan::with('book')
             ->where('user_id', auth()->id());
 
+        // ステータスで絞り込み
         if ($request->filled('status')) {
             $query->where(
                 'status',
@@ -36,6 +30,7 @@ class ReadingPlanController extends Controller
             );
         }
 
+        // 目標日の昇順で表示
         $readingPlans = $query
             ->orderBy('target_date')
             ->paginate(10)

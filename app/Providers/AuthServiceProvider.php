@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Models\Book;
+use App\Models\Review;
+use App\Models\ReadingPlan;
 use App\Policies\BookPolicy;
 use App\Policies\ReadingPlanPolicy;
 use App\Policies\ReviewPolicy;

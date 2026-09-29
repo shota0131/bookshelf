@@ -1,3 +1,6 @@
+@php
+    use App\Enums\ReadingPlanStatus;
+@endphp
 <x-app-layout>
 
     <x-slot name="header">

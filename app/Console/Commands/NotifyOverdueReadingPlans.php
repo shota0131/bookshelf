@@ -4,8 +4,9 @@ namespace App\Console\Commands;
 
 use App\Enums\ReadingPlanStatus;
 use App\Models\ReadingPlan;
+use App\Notifications\OverdueReadingPlanNotification;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\DB;
 
 class NotifyOverdueReadingPlans extends Command
 {
@@ -21,11 +22,15 @@ class NotifyOverdueReadingPlans extends Command
             ->get();
 
         foreach ($plans as $plan) {
-            $plan->update([
-                'status' => ReadingPlanStatus::EXPIRED,
-            ]);
+            DB::transaction(function () use ($plan) {
+                $plan->update([
+                    'status' => ReadingPlanStatus::EXPIRED,
+                ]);
 
-            // ここで既存の通知クラスを使って通知を送信する
+                $plan->user->notify(
+                    new OverdueReadingPlanNotification($plan)
+                );
+            });
         }
 
         $this->info('期限切れの読書計画を処理しました。');
