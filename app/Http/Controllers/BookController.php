@@ -181,6 +181,9 @@ class BookController extends Controller
 
     public function edit(Book $book)
     {
+        // 自分が登録した書籍のみ編集可能
+        $this->authorize('update', $book);
+
         $genres = Genre::orderBy('name')->get();
 
         return view('books.edit', compact('book', 'genres'));
@@ -188,6 +191,9 @@ class BookController extends Controller
 
     public function update(UpdateBookRequest $request, Book $book)
     {
+        // 自分が登録した書籍のみ更新可能
+        $this->authorize('update', $book);
+
         $validated = $request->validated();
 
         $genreIds = $validated['genre_ids'];
@@ -204,6 +210,9 @@ class BookController extends Controller
 
     public function destroy(Book $book)
     {
+        // 自分が登録した書籍のみ削除可能
+        $this->authorize('delete', $book);
+
         $book->genres()->detach();
 
         $book->reviews()->delete();
