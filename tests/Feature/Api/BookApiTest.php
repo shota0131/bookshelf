@@ -92,7 +92,6 @@ class BookApiTest extends TestCase
             'title',
             'author',
             'isbn',
-            'published_date',
             'user_id',
             'genre_ids',
         ]);
@@ -223,6 +222,17 @@ class BookApiTest extends TestCase
         );
 
         $response->assertStatus(403);
+
+        $response->assertExactJson([
+            'error' => 'この操作を実行する権限がありません。',
+        ]);
+
+        // 書籍情報が変更されていないことを確認
+        $this->assertDatabaseHas('books', [
+            'id' => $book->id,
+            'title' => $book->title,
+            'user_id' => $owner->id,
+        ]);
     }
 
     /** @test */
@@ -265,8 +275,14 @@ class BookApiTest extends TestCase
 
         $response->assertStatus(403);
 
+        $response->assertExactJson([
+            'error' => 'この操作を実行する権限がありません。',
+        ]);
+
+        // 書籍が削除されていないことを確認
         $this->assertDatabaseHas('books', [
             'id' => $book->id,
+            'user_id' => $owner->id,
         ]);
     }
 }
