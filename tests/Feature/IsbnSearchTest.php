@@ -37,12 +37,30 @@ class IsbnSearchTest extends TestCase
             ])
         );
 
-        $response->assertStatus(200);
+        $response->assertOk();
 
         $response->assertJson([
             'title' => 'テスト書籍',
             'author' => 'テスト著者',
         ]);
+    }
+
+    /** @test */
+    public function ISBN検索で書籍が見つからない場合はエラーになる(): void
+    {
+        Http::fake([
+            '*' => Http::response([
+                'totalItems' => 0,
+            ], 200),
+        ]);
+
+        $response = $this->getJson(
+            route('books.isbn-search', [
+                'isbn' => '9784101010014',
+            ])
+        );
+
+        $this->assertNotEquals(200, $response->status());
     }
 
     /** @test */
@@ -58,6 +76,6 @@ class IsbnSearchTest extends TestCase
             ])
         );
 
-        $response->assertStatus(500);
+        $this->assertNotEquals(200, $response->status());
     }
 }

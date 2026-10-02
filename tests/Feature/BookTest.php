@@ -267,4 +267,72 @@ class BookTest extends TestCase
             'genre_id' => $genre->id,
         ]);
     }
+
+    /** @test */
+    public function 書籍の登録者以外は書籍編集画面を閲覧できない(): void
+    {
+        $owner = User::factory()->create();
+        $otherUser = User::factory()->create();
+
+        $book = Book::factory()->create([
+            'user_id' => $owner->id,
+        ]);
+
+        $this->actingAs($otherUser);
+
+        $response = $this->get(route('books.edit', $book));
+
+        $response->assertForbidden();
+    }
+
+    /** @test */
+    public function 書籍の登録者以外は書籍を更新できない(): void
+    {
+        $owner = User::factory()->create();
+        $otherUser = User::factory()->create();
+        $book = Book::factory()->create([
+            'user_id' => $owner->id,
+            'title' => '元のタイトル',
+        ]);
+
+        $this->actingAs($otherUser);
+
+        $response = $this->put(route('books.update', $book), [
+            'title' => '変更後のタイトル',
+            'author' => 'テスト著者',
+            'isbn' => $book->isbn,
+            'published_date' => now()->format('Y-m-d'),
+            'description' => null,
+            'image_url' => null,
+            'genre_ids' => [],
+        ]);
+
+        $response->assertForbidden();
+
+        $this->assertDatabaseHas('books', [
+            'id' => $book->id,
+            'title' => '元のタイトル',
+        ]);
+    }
+
+    /** @test */
+    public function 書籍の登録者以外は書籍を削除できない(): void
+    {
+        $owner = User::factory()->create();
+        $otherUser = User::factory()->create();
+
+        $book = Book::factory()->create([
+            'user_id' => $owner->id,
+        ]);
+
+        $this->actingAs($otherUser);
+
+        $response = $this->delete(route('books.destroy', $book));
+
+        $response->assertForbidden();
+
+        $this->assertDatabaseHas('books', [
+            'id' => $book->id,
+        ]);
+    }
 }
