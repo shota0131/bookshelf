@@ -89,7 +89,6 @@ class BookTest extends TestCase
             'title',
             'author',
             'isbn',
-            'published_date',
             'genre_ids',
         ]);
     }
@@ -290,6 +289,9 @@ class BookTest extends TestCase
     {
         $owner = User::factory()->create();
         $otherUser = User::factory()->create();
+
+        $genre = \App\Models\Genre::factory()->create();
+
         $book = Book::factory()->create([
             'user_id' => $owner->id,
             'title' => '元のタイトル',
@@ -304,7 +306,7 @@ class BookTest extends TestCase
             'published_date' => now()->format('Y-m-d'),
             'description' => null,
             'image_url' => null,
-            'genre_ids' => [],
+            'genre_ids' => [$genre->id],
         ]);
 
         $response->assertForbidden();

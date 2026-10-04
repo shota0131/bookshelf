@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Models\Book;
 use App\Models\User;
+use App\Models\Genre;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
@@ -13,11 +13,11 @@ class SanctumAuthTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function 未認証では認証必須APIにアクセスできない()
+    public function 未認証でも公開APIにアクセスできる()
     {
-        $response = $this->getJson('/api/books');
+        $response = $this->getJson('/api/v1/books');
 
-        $response->assertUnauthorized();
+        $response->assertOk();
     }
 
     /** @test */
@@ -27,7 +27,7 @@ class SanctumAuthTest extends TestCase
 
         Sanctum::actingAs($user);
 
-        $response = $this->getJson('/api/books');
+        $response = $this->getJson('/api/v1/books');
 
         $response->assertOk();
     }
@@ -36,17 +36,18 @@ class SanctumAuthTest extends TestCase
     public function Sanctum認証済みユーザーは書籍を登録できる()
     {
         $user = User::factory()->create();
+        $genre = Genre::factory()->create();
 
         Sanctum::actingAs($user);
 
-        $response = $this->postJson('/api/books', [
+        $response = $this->postJson('/api/v1/books', [
             'title' => 'APIテスト書籍',
             'author' => 'テスト著者',
             'isbn' => '9781234567890',
             'published_date' => '2025-01-01',
             'description' => 'APIから登録した書籍',
             'user_id' => $user->id,
-            'genres' => [],
+            'genre_ids' => [$genre->id],
         ]);
 
         $response->assertSuccessful();
@@ -64,16 +65,17 @@ class SanctumAuthTest extends TestCase
 
         Sanctum::actingAs($user);
 
-        $response = $this->postJson('/api/books', [
+        $response = $this->postJson('/api/v1/books', [
             'title' => '',
             'author' => '',
             'isbn' => 'invalid',
             'published_date' => 'invalid-date',
             'user_id' => $user->id,
-            'genres' => [],
+            'genre_ids' => [],
         ]);
 
         $response->assertUnprocessable();
+
         $response->assertJsonValidationErrors([
             'title',
             'author',

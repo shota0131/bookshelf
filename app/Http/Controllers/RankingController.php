@@ -11,6 +11,7 @@ class RankingController extends Controller
     {
         $rankedBooks = Book::with('genres')
             ->withAvg('reviews', 'rating')
+            ->whereHas('reviews')
             ->orderByDesc('reviews_avg_rating')
             ->take(10)
             ->get();

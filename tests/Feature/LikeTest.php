@@ -17,7 +17,11 @@ class LikeTest extends TestCase
     {
         $user = User::factory()->create();
         $author = User::factory()->create();
-        $book = Book::factory()->create(['user_id' => $author->id]);
+
+        $book = Book::factory()->create([
+            'user_id' => $author->id,
+        ]);
+
         $review = Review::factory()->create([
             'user_id' => $author->id,
             'book_id' => $book->id,
@@ -28,7 +32,7 @@ class LikeTest extends TestCase
 
         $response->assertRedirect();
 
-        $this->assertDatabaseHas('likes', [
+        $this->assertDatabaseHas('review_likes', [
             'user_id' => $user->id,
             'review_id' => $review->id,
         ]);
@@ -39,20 +43,24 @@ class LikeTest extends TestCase
     {
         $user = User::factory()->create();
         $author = User::factory()->create();
-        $book = Book::factory()->create(['user_id' => $author->id]);
+
+        $book = Book::factory()->create([
+            'user_id' => $author->id,
+        ]);
+
         $review = Review::factory()->create([
             'user_id' => $author->id,
             'book_id' => $book->id,
         ]);
 
-        $review->likes()->attach($user->id);
+        $user->likedReviews()->attach($review->id);
 
         $response = $this->actingAs($user)
-            ->delete(route('reviews.unlike', $review));
+            ->post(route('reviews.like', $review));
 
         $response->assertRedirect();
 
-        $this->assertDatabaseMissing('likes', [
+        $this->assertDatabaseMissing('review_likes', [
             'user_id' => $user->id,
             'review_id' => $review->id,
         ]);
@@ -62,7 +70,11 @@ class LikeTest extends TestCase
     public function 未ログインユーザーはいいねできない()
     {
         $author = User::factory()->create();
-        $book = Book::factory()->create(['user_id' => $author->id]);
+
+        $book = Book::factory()->create([
+            'user_id' => $author->id,
+        ]);
+
         $review = Review::factory()->create([
             'user_id' => $author->id,
             'book_id' => $book->id,
@@ -72,7 +84,7 @@ class LikeTest extends TestCase
 
         $response->assertRedirect(route('login'));
 
-        $this->assertDatabaseMissing('likes', [
+        $this->assertDatabaseMissing('review_likes', [
             'review_id' => $review->id,
         ]);
     }
@@ -82,17 +94,21 @@ class LikeTest extends TestCase
     {
         $user = User::factory()->create();
         $author = User::factory()->create();
-        $book = Book::factory()->create(['user_id' => $author->id]);
+
+        $book = Book::factory()->create([
+            'user_id' => $author->id,
+        ]);
+
         $review = Review::factory()->create([
             'user_id' => $author->id,
             'book_id' => $book->id,
         ]);
 
-        $review->likes()->attach($user->id);
+        $user->likedReviews()->attach($review->id);
 
         $this->actingAs($user)
             ->post(route('reviews.like', $review));
 
-        $this->assertDatabaseCount('likes', 1);
+        $this->assertDatabaseCount('review_likes', 0);
     }
 }

@@ -97,7 +97,7 @@ class GenreTest extends TestCase
         $response = $this->get(route('genres.show', $genre));
 
         $response->assertOk();
-        $response->assertSee('書籍がありません');
+        $response->assertSee('このジャンルの書籍はまだ登録されていません。');
     }
 
     /** @test */

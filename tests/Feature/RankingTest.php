@@ -100,8 +100,8 @@ class RankingTest extends TestCase
 
         $response->assertOk();
 
-        $response->assertViewHas('books', function ($books) {
-            return $books->count() === 10;
+        $response->assertViewHas('rankedBooks', function ($rankedBooks) {
+            return $rankedBooks->count() === 10;
         });
     }
 }
