@@ -36,14 +36,19 @@ class BookController extends Controller
             })
 
             // 並び順
-            ->when($request->input('sort', 'newest') === 'oldest', function ($query) {
-                $query->oldest();
+            // 新しい順：出版日が新しい書籍から
+            ->when($request->input('sort', 'newest') === 'newest', function ($query) {
+                $query->orderByDesc('published_date');
             })
+
+            // 古い順：出版日が古い書籍から
+            ->when($request->input('sort', 'newest') === 'oldest', function ($query) {
+                $query->orderBy('published_date');
+            })
+
+            // 評価が高い順
             ->when($request->input('sort', 'newest') === 'rating', function ($query) {
                 $query->orderByDesc('reviews_avg_rating');
-            })
-            ->when($request->input('sort', 'newest') === 'newest', function ($query) {
-                $query->latest();
             })
 
             ->paginate(10)
